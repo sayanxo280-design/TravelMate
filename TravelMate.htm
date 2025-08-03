@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TravelMate - Your Travel Guide</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef6f9;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #0077b6;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .info-box {
+      margin-top: 30px;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #cccccc;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    ul {
+      text-align: left;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    ul li::before {
+      content: "• ";
+      color: #0077b6;
+    }
+
+    h3 {
+      color: #023e8a;
+    }
+
+    .map-box {
+      margin-top: 20px;
+    }
+
+    .images {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .images img {
+      width: 180px;
+      height: 120px;
+      border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 0 5px #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 TravelMate</h1>
+  <p>Select a destination to explore:</p>
+
+  <select onchange="showDetails()" id="citySelect">
+    <option value="">-- Choose City --</option>
+    <option value="kochi">Kochi</option>
+    <option value="goa">Goa</option>
+    <option value="delhi">Delhi</option>
+    <option value="jaipur">Jaipur</option>
+  </select>
+
+  <div class="info-box" id="resultBox" style="display:none;">
+    <h3 id="placeTitle"></h3>
+    <ul id="placesList"></ul>
+
+    <h3>🏨 Recommended Hotels</h3>
+    <ul id="hotelsList"></ul>
+
+    <div class="map-box">
+      <h3>🗺️ Location Map</h3>
+      <iframe id="mapFrame" width="100%" height="300" style="border:0;" loading="lazy"></iframe>
+    </div>
+
+    <div>
+      <h3>📷 Famous Spots</h3>
+      <div class="images" id="imageGallery"></div>
+    </div>
+  </div>
+
+  <script>
+    const data = {
+      kochi: {
+        places: ["Fort Kochi", "Marine Drive", "Mattancherry Palace"],
+        hotels: ["Taj Malabar Resort", "Le Meridien Kochi", "Grand Hyatt Kochi"],
+        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.195795373458!2d76.24195187504524!3d9.931232390189868!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080d54b250759f%3A0x64d0e01ffcb6f2fb!2sKochi%2C%20Kerala!5e0!3m2!1sen!2sin!4v1691500970666!5m2!1sen!2sin",
+        images: [
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Fort_Kochi.jpg/800px-Fort_Kochi.jpg",
+          "https://keralatourism.travel/images/destinations/headers/marine-drive-kochi-tourism-entry-fee-timings-holidays-reviews-header.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Mattancherry_Palace.jpg/800px-Mattancherry_Palace.jpg"
+        ]
+      },
+      goa: {
+        places: ["Baga Beach", "Dudhsagar Falls", "Old Goa Churches"],
+        hotels: ["Taj Exotica", "ITC Grand Goa", "Alila Diwa Goa"],
+        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d60358.33899764855!2d73.74588972828293!3d15.299326775214373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bbfdfb9f66bfff9%3A0x69a1d0113c937c85!2sGoa!5e0!3m2!1sen!2sin!4v1691501180951!5m2!1sen!2sin",
+        images: [
+          "https://upload.wikimedia.org/wikipedia/commons/7/72/Baga_Beach.jpg",
+          "https://www.tripsavvy.com/thmb/yqYDwTTJxLqXp7HCG7jkoTPlrHo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/dudhsagarfalls-goa-56a1131e5f9b58b7d0bd4790.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/9/9a/Basilica_of_Bom_Jesus%2C_Goa.jpg"
+        ]
+      },
+      delhi: {
+        places: ["Red Fort", "India Gate", "Qutub Minar"],
+        hotels: ["The Oberoi", "Taj Mahal Hotel", "ITC Maurya"],
+        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d448181.5647540852!2d76.81305758056952!3d28.64368463722039!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd1e7c53f4df%3A0xf02c8cd4b1c0f9a1!2sNew%20Delhi!5e0!3m2!1sen!2sin!4v1691501254123!5m2!1sen!2sin",
+        images: [
+          "https://upload.wikimedia.org/wikipedia/commons/9/91/Red_Fort_2020.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/d/d6/India_Gate_in_New_Delhi_03-2016_img3.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/f/f0/Qutb_Minar_February_2016_img3.jpg"
+        ]
+      },
+      jaipur: {
+        places: ["Hawa Mahal", "Amber Fort", "City Palace"],
+        hotels: ["Rambagh Palace", "ITC Rajputana", "The Lalit Jaipur"],
+        map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.0167764139405!2d75.82453847502965!3d26.912433060495236!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db179f18bd7e7%3A0xf1686281b1a40795!2sJaipur%2C%20Rajasthan!5e0!3m2!1sen!2sin!4v1691501356987!5m2!1sen!2sin",
+        images: [
+          "https://upload.wikimedia.org/wikipedia/commons/f/fb/Hawa_Mahal_2011.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/3/3a/Amber_Fort_%28cropped%29.jpg",
+          "https://upload.wikimedia.org/wikipedia/commons/1/13/Jaipur_City_Palace_Badi_Chaupar.jpg"
+        ]
+      }
+    };
+
+    function showDetails() {
+      const city = document.getElementById("citySelect").value;
+      const resultBox = document.getElementById("resultBox");
+      const placeTitle = document.getElementById("placeTitle");
+      const placesList = document.getElementById("placesList");
+      const hotelsList = document.getElementById("hotelsList");
+      const mapFrame = document.getElementById("mapFrame");
+      const imageGallery = document.getElementById("imageGallery");
+
+      if (!city || !data[city]) {
+        resultBox.style.display = "none";
+        return;
+      }
+
+      const selected = data[city];
+      resultBox.style.display = "block";
+      placeTitle.textContent = `🌆 Best Places in ${capitalize(city)}`;
+      placesList.innerHTML = selected.places.map(p => `<li>${p}</li>`).join("");
+      hotelsList.innerHTML = selected.hotels.map(h => `<li>${h}</li>`).join("");
+      mapFrame.src = selected.map;
+      imageGallery.innerHTML = selected.images.map(src => `<img src="${src}" alt="Place image">`).join("");
+    }
+
+    function capitalize(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+  </script>
+
+</body>
+</html>
